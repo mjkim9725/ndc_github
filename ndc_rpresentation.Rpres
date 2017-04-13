@@ -1,0 +1,103 @@
+NDC_rPresentation
+========================================================
+author: Minjoon Kim, BI Team, Gamevil
+date: 2017-04-25
+font-family: NanumGothicExtraBold
+autosize: true
+
+Who am I?
+========================================================
+
+- 1st Class: Labor Economics => PhD?
+- 2nd Class: Greenhouse Gas Reduction, CGE modeling
+- 3rd Class: BI, Data analysis, Machine Learning, R visualization
+
+
+Data Anlysis - Process(Clean Version)
+========================================================
+
+- 1. Hypothesis
+- 2. Data Extraction
+- 3. Data Analysis(EDA, Machine Learning, Regression Analysis, etc..)
+- 4. Result / Visualization
+- 5. Output => MS-WORD, MS-PowerPoint
+
+
+Data Anlysis - Process(between 4 & 5)
+========================================================
+
+- 4. Result / Visualization
+- 4-1. Result Table
+    + Table - Copy & Paste - Font - Justify(Center, Left, etc)
+- 4-2. Chart
+    + Copy - Insert Image - Position - Size
+
+
+Data Anlysis - Dirty Process(between 4 & 5)
+========================================================
+
+- 분석 => 시각화/결론 도출 => MS-WORD/PPT 복사 => 보고
+    + => 분석 기간 변경 => 분석 => 시각화/결론 => 차트/결과 복사 => 보고
+    + => 변수 추가 => 분석 => 시각화/결론 => 차트/결과 복사 => 보고
+    + => 엑셀처럼 그림에 마우스 가져다 대면 숫자 나오게 안 되나? => 결과만 복사 => 엑셀에서 차트 그리기 => 보고
+    + => 무한루프...
+
+
+What If?
+====
+- Changing period?
+- Result change?
+- Chart: color, size, fill color, etc..
+- Font: Why 맑은고딕?
+- Nooooo!!!!!!!!!!!!!!
+
+![](cha.png)
+
+
+Analysis Report
+====
+
+- Summary Stats
+
+```{r, echo=FALSE}
+df = read.csv('data.csv', header = T)
+df2 = subset(df, df$start_week == '2016-12-26')
+head(df2)
+```
+
+
+Analysis Report(Kable)
+====
+
+- Summary Stats
+
+```{r, echo=FALSE, results='asis'}
+kable(head(df2[,1:5]))
+```
+
+
+Visualization
+====
+
+```{r, echo = FALSE, fig.height=9, fig.width=16, dpi = 200}
+library(ggplot2)
+
+ggplot(df2, aes(wau, arpwau, label = game)) + geom_point(aes(size = krw, color = game)) + scale_size(range=c(5,50)) + theme(legend.position="none") + geom_text(size = 3)
+```
+
+- Comments
+    + Blah Blah Blah
+    
+
+Visualization - Interactive Chart(Plotly)
+====
+
+```{r, echo = FALSE, fig.height=9, fig.width=16, dpi = 200}
+library(plotly)
+plot = ggplot(df2, aes(wau, arpwau, label = game)) + geom_point(aes(size = krw, color = game)) + scale_size(range=c(5,30)) + theme(legend.position="none") + geom_text(size = 3)
+p=ggplotly(plot)
+htmlwidgets::saveWidget(as.widget(p), file = "p.html")
+```
+
+<iframe src="p.html" style="position:absolute;height:100%;width:100%"></iframe>
+
