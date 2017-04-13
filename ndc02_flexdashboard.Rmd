@@ -1,0 +1,188 @@
+---
+title: "NDC_Flexdashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: sandstone
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+1. Static Chart - ggplot2
+====================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Summary stats: 2016-12-19
+
+```{r}
+df = read.csv('data.csv', header = T)
+df19 = subset(df, df$start_week == '2016-12-19')
+df26 = subset(df, df$start_week == '2016-12-26')
+library(knitr)
+kable(head(df19), format.args = list(big.mark = ","))
+```
+
+### Summary stats: 2016-12-26
+
+```{r}
+kable(head(df26), format.args = list(big.mark = ","))
+```
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### Weekly KPI - 2016-12-19
+
+```{r, dpi=200}
+library(ggplot2)
+
+ggplot(df19, aes(wau, arpwau, label = game)) + geom_point(aes(size = krw, color = game)) + scale_size(range=c(5,50)) + theme(legend.position="none") + geom_text(size = 3)
+```
+
+### Weekly KPI - 2016-12-26
+
+```{r, dpi=200}
+ggplot(df26, aes(wau, arpwau, label = game)) + geom_point(aes(size = krw, color = game)) + scale_size(range=c(5,50)) + theme(legend.position="none") + geom_text(size = 3)
+```
+
+
+2. Static Chart2 - ggplot2
+====================================
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### Weekly KPI - 2016-12-19
+
+```{r, dpi=200}
+library(ggplot2)
+
+ggplot(df19, aes(wau, arpwau, label = game)) + geom_point(aes(size = krw, color = game)) + scale_size(range=c(5,50)) + theme(legend.position="none") + geom_text(size = 3)
+```
+
+### Weekly KPI - 2016-12-26
+
+```{r, dpi=200}
+ggplot(df26, aes(wau, arpwau, label = game)) + geom_point(aes(size = krw, color = game)) + scale_size(range=c(5,50)) + theme(legend.position="none") + geom_text(size = 3)
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Summary stats: 2016-12-19
+
+```{r}
+df = read.csv('data.csv', header = T)
+df19 = subset(df, df$start_week == '2016-12-19')
+df26 = subset(df, df$start_week == '2016-12-26')
+library(knitr)
+kable(head(df19), format.args = list(big.mark = ","))
+```
+
+### Summary stats: 2016-12-26
+
+```{r}
+kable(head(df26), format.args = list(big.mark = ","))
+```
+
+
+3. Interactive Chart - plotly {data-orientation=rows}
+====================================
+
+
+Row {data-height = 200}
+------------------------------------------------------------------------------
+
+### Total Active User on 2016-12-26
+
+```{r}
+wau26 = formatC(sum(df26$wau), big.mark = ',')
+valueBox(wau26, 
+         icon = 'fa-user',
+         color = ifelse(wau26 < 500000, 'warning', 'success'))
+```
+
+### Total Revenue on 2016-12-26
+
+```{r}
+krw26 = formatC(sum(df26$krw), big.mark = ',')
+valueBox(krw26, 
+         icon = 'fa-won',
+         color = ifelse(krw26 < 500000000, 'warning', 'success'))
+```
+
+### Average Revenue on 2016-12-26
+
+```{r}
+arpwau26 = sum(df26$krw) / sum(df26$wau)
+
+arpwau26 = formatC(arpwau26, big.mark = ',')
+valueBox(arpwau26, 
+         icon = 'fa-won',
+         color = ifelse(arpwau26 < 1500, 'danger', 'success'))
+```
+
+
+Row {data-height = 200}
+------------------------------------------------------------------------------
+
+### Active User Change(Total) - 12/19 to 12/26
+
+```{r}
+r_wau = round((sum(as.numeric(df26$wau)) - sum(as.numeric(df19$wau))) / sum(as.numeric(df19$wau)) * 100, 2)
+r_krw = round((sum(as.numeric(df26$krw)) - sum(as.numeric(df19$krw))) / sum(as.numeric(df19$krw)) * 100, 2)
+
+gauge(r_wau, min = -20, max = 20, symbol = '%', gaugeSectors(
+  success = c(0, 20), warning = c(-5, 0), danger = c(-5, -20)
+))
+```
+
+### Revenue Change(Total) - 12/19 to 12/26
+
+```{r}
+gauge(r_krw, min = -20, max = 20, symbol = '%', gaugeSectors(
+  success = c(0, 20), warning = c(-5, 0), danger = c(-5, -20)
+))
+```
+
+### AR Change(Total) - 12/19 to 12/26
+
+```{r}
+arpwau19 = sum(df19$krw) / sum(df19$wau)
+arpwau26 = sum(df26$krw) / sum(df26$wau)
+r_arpwau = round((arpwau26 - arpwau19) / (arpwau19) * 100, 2)
+
+gauge(r_arpwau, min = -20, max = 20, symbol = '%', gaugeSectors(
+  success = c(0, 20), warning = c(-5, 0), danger = c(-5, -20)
+))
+```
+
+Row {data-height = 600}
+------------------------------------------------------------------------------
+
+### Active User Change(by Games) - 12/19 to 12/26
+
+```{r}
+bar_wau = ggplot(df, aes(game, wau, fill=start_week)) + geom_bar(stat='identity', position='dodge')
+library(plotly)
+ggplotly(bar_wau)
+```
+
+### Revenue Change(by Games) - 12/19 to 12/26
+
+```{r}
+bar_krw = ggplot(df, aes(game, krw, fill=start_week)) + geom_bar(stat='identity', position='dodge')
+ggplotly(bar_krw)
+```
+
+### AR Change(by Games) - 12/19 to 12/26
+
+```{r}
+bar_arpwau = ggplot(df, aes(game, arpwau, fill=start_week)) + geom_bar(stat='identity', position='dodge')
+ggplotly(bar_arpwau)
+```
+
+

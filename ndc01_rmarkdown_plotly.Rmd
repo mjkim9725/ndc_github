@@ -1,0 +1,152 @@
+---
+title: "NDC_R markdown & plotly"
+author: "Minjoon Kim, BI Team, Gamevil"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 2
+    toc_float:
+      collapsed: no
+---
+
+<br>
+
+##1. Who am I?
+
+<br>
+
+* 1st Class: Labor Economics => PhD?
+
+<br>
+
+* 2nd Class: Greenhouse Gas Reduction, CGE modeling
+
+<br>
+
+* 3rd Class: BI, Data analysis, Machine Learning, R visualization
+
+<br>
+
+---
+
+##2. Data Anlysis - Process(Clean Version)
+
+<br>
+
+###2-1. Hypothesis
+
+<br>
+
+###2-2. Data Extraction
+
+<br>
+
+###2-3. Data Analysis(EDA, Machine Learning, Regression Analysis, etc..)
+
+<br>
+
+###2-4. Result / Visualization
+
+<br>
+
+###2-5. Output => MS-WORD, MS-PowerPoint
+
+<br>
+
+---
+
+##3. Data Anlysis - Process(between 4 & 5)
+
+<br>
+
+* Result / Visualization
+    + Result Table
+        - Table - Copy & Paste - Font - Justify(Center, Left, etc)
+    + Chart
+        - Copy - Insert Image - Position - Size
+
+---
+
+##4. Data Anlysis - Dirty Process(between 4 & 5)
+
+<br>
+
+* 분석 => 시각화/결론 도출 => MS-WORD/PPT 복사 => 보고
+    + => 분석 기간 변경 => 분석 => 시각화/결론 => 차트/결과 복사 => 보고
+    + => 변수 추가 => 분석 => 시각화/결론 => 차트/결과 복사 => 보고
+    + => 엑셀처럼 그림에 마우스 가져다 대면 숫자 나오게 안 되나? => 결과만 복사 => 엑셀에서 차트 그리기 => 보고
+    + => 무한루프...
+
+
+---
+
+##5. What If?
+
+<br>
+
+* Changing period?
+* Result change?
+* Chart: color, size, fill color, etc..
+* Font: Why 맑은고딕?
+* Nooooo!!!!!!!!!!!!!!
+
+![](cha.png)
+
+---
+
+##6. Analysis Report
+
+<br>
+
+* Summary Stats
+
+<br>
+
+```{r, echo=FALSE}
+df = read.csv('data.csv', header = T)
+df2 = subset(df, df$start_week == '2016-12-26')
+head(df2)
+```
+
+---
+
+##7. Analysis Report(Kable)
+
+<br>
+
+* Summary Stats
+
+<br>
+
+```{r, echo=FALSE, results='asis'}
+library(knitr)
+kable(head(df2))
+```
+
+---
+
+##8. Visualization
+
+<br>
+
+```{r, echo = FALSE, fig.height=9, fig.width=16, dpi = 200}
+library(ggplot2)
+
+ggplot(df2, aes(wau, arpwau, label = game)) + geom_point(aes(size = krw, color = game)) + scale_size(range=c(5,50)) + theme(legend.position="none") + geom_text(size = 3)
+```
+
+* Comments
+    + Blah Blah Blah
+    
+---
+
+##9. Visualization - Interactive Chart(Plotly)
+
+<br>
+
+```{r, echo = FALSE, fig.height=5, fig.width=8, message=FALSE, warning=FALSE}
+library(plotly)
+plot = ggplot(df2, aes(wau, arpwau, label = game)) + geom_point(aes(size = krw, color = game)) + scale_size(range=c(5,30)) + theme(legend.position="none") + geom_text(size = 3)
+p=ggplotly(plot)
+p
+```
